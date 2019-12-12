@@ -1,6 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import {Container, Form, Button, Modal } from "react-bootstrap" ;
+//import {LinkContainer} from "react-router-bootstrap" ;
 
 import "./contact.css"
 
@@ -16,6 +17,7 @@ class Contact extends React.Component {
 		 
 		 this.handleName = this.handleName.bind(this) ;
 		 this.handleConfirmation = this.handleConfirmation.bind(this);
+		 this.onClick = this.onClick.bind(this) ;
 		}
 
 	handleSubmit = async event => {
@@ -83,6 +85,10 @@ class Contact extends React.Component {
 		this.props.history.push('/portfolio');
 	}
 
+	onClick( event ) {
+		this.props.history.push('/portfolio');
+	}
+		
 	renderConfirmation() {
 		return (
 			<Modal show={this.state.showConfirmation} onHide={this.handleConfirmation}>
@@ -103,30 +109,33 @@ class Contact extends React.Component {
 	{
 		return (
 			<div id='contact-image' >
- 		  	<Container id='container-form' className='w-50 p-4'>
-				<h1 align="center">Contact Form</h1>
-				<p>If you would like to contact me about a booking or other enquiry then please fill in the form below and I will reply as soon as possible</p>
-				<Form onSubmit={this.handleSubmit}>
-					<Form.Group controlId="formBasicName">
-			  	  <Form.Label>Name</Form.Label>
-    				<Form.Control type="name" placeholder="Enter your name" onChange={this.handleName} required/>
-  				</Form.Group>
-   				<Form.Group controlId="formBasicEmail">
-					 <Form.Label>Email address</Form.Label>
-    				<Form.Control type="email" placeholder="Enter your email" onChange={this.handleEmail} required/>
-  				</Form.Group>
-					<Form.Group controlId="formBasicSubject">
-					 <Form.Label>Subject</Form.Label>
-    				<Form.Control type="subject" placeholder="Enter your Subject" onChange={this.handleSubject} required/>
-  				</Form.Group>
-					<Form.Group controlId="formBasicMessage">
-						<Form.Label>Message</Form.Label>
- 						<Form.Control as="textarea" rows="5" onChange={this.handleText} required/>
-  				</Form.Group>
-  				<Button variant="primary" type="submit" className="float-right">
-    				Submit
-  				</Button>
-				</Form>
+ 		  	<Container>
+							<Form onSubmit={this.handleSubmit} id='container-form'>
+								<Button className="close" type="close" aria-label="Close" onClick={this.onClick}>
+ 									<span aria-hidden="true">&times;</span>
+								</Button>		
+								<h1 align="center">Contact</h1>
+								<p>If you would like to contact me about a booking or other enquiry then please fill in the form below and I will reply as soon as possible</p>
+								<Form.Group controlId="formBasicName">
+			  	  			<Form.Label>Name</Form.Label>
+    							<Form.Control type="name" placeholder="Enter your name" onChange={this.handleName} required/>
+  							</Form.Group>
+   							<Form.Group controlId="formBasicEmail">
+								 	<Form.Label>Email address</Form.Label>
+    							<Form.Control type="email" placeholder="Enter your email" onChange={this.handleEmail} required/>
+  							</Form.Group>
+								<Form.Group controlId="formBasicSubject">
+					 				<Form.Label>Subject</Form.Label>
+    							<Form.Control type="subject" placeholder="Enter your Subject" onChange={this.handleSubject} required/>
+  							</Form.Group>
+								<Form.Group controlId="formBasicMessage">
+									<Form.Label>Message</Form.Label>
+ 									<Form.Control as="textarea" rows="5" onChange={this.handleText} required/>
+  							</Form.Group>
+  							<Button variant="primary" type="submit">
+    							Submit
+  							</Button>
+							</Form>
 				</Container>
 
 				{this.renderConfirmation()}

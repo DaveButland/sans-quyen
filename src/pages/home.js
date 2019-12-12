@@ -1,7 +1,7 @@
 import React, { Fragment} from "react";
 import { withRouter } from "react-router-dom";
 import { Carousel, Button } from "react-bootstrap" ;
-import cookie from "react-cookies";
+//import cookie from "react-cookies";
 
 import "./home.css" ;
 
@@ -37,30 +37,32 @@ class Home extends React.Component {
 			
 				// check if logged in before setting cookie. Only set these cookies if not logged in
 
-				var key       = response.cookies["CloudFront-Key-Pair-Id"] ;
-				var policy    = response.cookies["CloudFront-Policy"] ;
-				var signature = response.cookies["CloudFront-Signature"] ;
-				var images    = response.images ;
+//				var key       = response.cookies["CloudFront-Key-Pair-Id"] ;
+//				var policy    = response.cookies["CloudFront-Policy"] ;
+//				var signature = response.cookies["CloudFront-Signature"] ;
 
-				try {
-					cookie.save( "CloudFront-Key-Pair-Id", key ) ;
-					cookie.save( "CloudFront-Policy", policy ) ;
-					cookie.save( "CloudFront-Signature", signature ) ;
-				} catch( err ) { 
-					console.log( err ) ;
-				}
+				var images    = response ;
+
+//				try {
+//					cookie.save( "CloudFront-Key-Pair-Id", key ) ;
+//					cookie.save( "CloudFront-Policy", policy ) ;
+//					cookie.save( "CloudFront-Signature", signature ) ;
+//				} catch( err ) { 
+//					console.log( err ) ;
+//				}
 
 				this.setState( { images: images } ) ;
 			} else {
 				console.log( "Error getting front page images " ) ;
 
-				cookie.remove( "CloudFront-Key-Pair-Id" ) ;
-				cookie.remove( "CloudFront-Policy" ) ;
-				cookie.remove( "CloudFront-Signature" ) ;
+//				cookie.remove( "CloudFront-Key-Pair-Id" ) ;
+//				cookie.remove( "CloudFront-Policy" ) ;
+//				cookie.remove( "CloudFront-Signature" ) ;
 			}
 		}.bind(this) ;
 		
-		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/public?domain='+process.env.REACT_APP_HTML_DOMAIN, true ) ;
+		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums/f7b63276-0be4-4658-9d9c-cc620dc6aba5/images', true ) ;
+//		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/public?domain='+process.env.REACT_APP_HTML_DOMAIN, true ) ;
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		
 		xhr.send();
@@ -126,7 +128,7 @@ class Home extends React.Component {
 		screenSize = Math.floor( screenSize / 300 + 1 ) * 300 ;
 
 //		const nav = this.props.security.loggedIn() ;
-		const nav = false ;
+//		const nav = false ;
 
 		var carouselClass = "" ;
 
@@ -169,8 +171,8 @@ class Home extends React.Component {
 						} 
       	    return (
 							<Carousel.Item key={image.imageId} >
-								{ screenSize > 1800 
-								?	(	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt={image.name} /> )
+								{ screenSize > 1800
+								?	(	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-1800"} alt={image.name} /> )
 								: (	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-"+screenSize} alt={image.name} /> )
 								}
 							</Carousel.Item>
@@ -178,7 +180,7 @@ class Home extends React.Component {
 					})}
 				</Carousel>
 				<div className="btn-parent">
-					<Button variant="outline-light" className="btn-wrap-text" onClick={this.onClick}>
+					<Button variant="outline-light" className="btn-wrap-text-1" onClick={this.onClick}>
 						<span className="name-text">Quyen Le Model</span>
 						<span className="soon-text">Quyen Le Model</span>
 					</Button>

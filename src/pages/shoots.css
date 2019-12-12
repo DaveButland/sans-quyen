@@ -1,0 +1,17 @@
+.shoot-image {
+	overflow: hidden ;
+}
+
+.add-shoot-image {
+	opacity: 50%
+}
+
+.add-shoot-image-selected {
+	background-color: #777 ;
+}
+
+/*
+.close {
+	display: none
+}
+*/

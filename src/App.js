@@ -8,6 +8,12 @@ import Home from './pages/home' ;
 import Portfolio from './pages/portfolio' ;
 import SignIn from './pages/signin' ;
 import Contact from './pages/contact' ;
+import About from './pages/about' ;
+import UserHome from './pages/userhome' ;
+import Shoots from './pages/shoots' ;
+import Albums from './pages/albums' ;
+import Messages from './pages/messages' ;
+import Calendar from './pages/cal' ;
 
 import './App.css';
 
@@ -22,13 +28,15 @@ class App extends React.Component {
 		this.state = {
 			isAuthenticated: false,
 			isAuthenticating: true,
-			security: new Security()
+			security: null
 		} ;
 	}
 
 	componentDidMount = async () => {
+
 		var security = new Security() ;
-		await security.getSession() ;
+
+		await security.authenticate() ;
 
 		this.setState( { security: security } ) ;
 	}
@@ -39,16 +47,20 @@ class App extends React.Component {
 	}
 
 	render = () => {
+
+		var security = this.state.security ;
+
 		return (
-//			!( this.state.isAuthenticating ) &&
+			( security ) &&
 			<div>
-				{ !this.state.isAuthenticated
+				{ !security.isAuthenticated()
         ? <div>
 						<Switch>
 							<Route exact path="/" component={Home} props={this.security}/>
 							<Route exact path="/portfolio" component={Portfolio} props={this.security}/>
 							<Route exact path="/contact" component={Contact} props={this.security}/>
-							<Route exact path="/signin" component={SignIn} props={this.security}/>
+							<Route exact path="/about" component={About} props={this.security}/>
+							<Route exact path='/signin' render={(props) => <SignIn {...props} security={this.state.security} />} />
 							<Route component={Home} props={this.security}/>
 						</Switch>
 					</div>
@@ -57,6 +69,15 @@ class App extends React.Component {
 							<Route exact path="/" component={Home} props={this.security}/>
 							<Route exact path="/portfolio" component={Portfolio} props={this.security}/>
 							<Route exact path="/contact" component={Contact} props={this.security}/>
+							<Route exact path="/about" component={About} props={this.security}/>
+							<Route exact path='/signin' render={(props) => <SignIn {...props} security={this.state.security} />} />
+							<Route exact path="/home" render={(props) => <UserHome {...props} security={this.state.security} />} />
+							<Route exact path="/shoots" render={(props) => <Shoots {...props} security={this.state.security} />} />
+							<Route path="/shoots/:shootid" render={(props) => <Shoots {...props} security={this.state.security} />} />
+							<Route exact path="/albums" render={(props) => <Albums {...props} security={this.state.security} />} />
+							<Route path="/albums/:albumid" render={(props) => <Albums {...props} security={this.state.security} />} />
+							<Route exact path="/messages" render={(props) => <Messages {...props} security={this.state.security} />} />
+							<Route exact path="/calendar" render={(props) => <Calendar {...props} security={this.state.security} />} />
 							<Route component={Home} props={this.security}/>
 						</Switch>
 				  </div>

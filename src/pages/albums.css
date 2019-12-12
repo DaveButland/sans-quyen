@@ -1,0 +1,12 @@
+.album-image {
+	overflow: hidden ;
+}
+
+.add-image {
+	opacity: 0.5
+}
+
+.add-image-selected {
+	background-color: #f00 ;
+}
+

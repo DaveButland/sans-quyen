@@ -1,8 +1,17 @@
 .quyenle-name {
-	padding: 10px ;
-	padding-bottom:50px;
+	padding-top: 50px ;
+	padding-bottom: 30px ;
 	font-family: "ThuFap", serif;
-	font-size: 100px;
+	font-size: 600% ;
+}
+
+.quyenle-name a {
+  color: #000;
+}
+
+.quyenle-name a:hover {
+	color: #e9ca87 ;
+	text-decoration: none;
 }
 
 .quyen-contact {

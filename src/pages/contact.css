@@ -7,18 +7,13 @@
 	-webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;
+	background-size: cover;
 }
 
 #container-form {
+	padding: 10% ;
+	margin: auto ;
+	max-width: 800px ;
 	color: RGBA( 255, 255, 255, 1.0 ) ;
   background-color: RGBA( 0, 0, 0, 0.3 ) ;
 }
-
-
-/*
-width: 100vw;
-background-repeat: no-repeat ;
-background-attachment: fixed ;
-background-position: center ;
-*/
