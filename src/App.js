@@ -12,6 +12,7 @@ import About from './pages/about' ;
 import UserHome from './pages/userhome' ;
 import Shoots from './pages/shoots' ;
 import Albums from './pages/albums' ;
+import Images from './pages/images' ;
 import Messages from './pages/messages' ;
 import Calendar from './pages/cal' ;
 
@@ -76,6 +77,7 @@ class App extends React.Component {
 							<Route path="/shoots/:shootid" render={(props) => <Shoots {...props} security={this.state.security} />} />
 							<Route exact path="/albums" render={(props) => <Albums {...props} security={this.state.security} />} />
 							<Route path="/albums/:albumid" render={(props) => <Albums {...props} security={this.state.security} />} />
+							<Route path="/images/:imageid" render={(props) => <Images {...props} security={this.state.security} />} />
 							<Route exact path="/messages" render={(props) => <Messages {...props} security={this.state.security} />} />
 							<Route exact path="/calendar" render={(props) => <Calendar {...props} security={this.state.security} />} />
 							<Route component={Home} props={this.security}/>

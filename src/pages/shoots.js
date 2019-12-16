@@ -1,6 +1,8 @@
 import React from "react";
 import { Container, Card, Row, Col, Button, Modal, ProgressBar, FormControl, InputGroup } from "react-bootstrap";
-import Gallery from "react-photo-gallery" ;
+//import Gallery from "react-photo-gallery" ;
+import arrayMove from "array-move" ;
+import SortableGallery from "./sortablegallery";
 import EXIF from "exif-js" ;
 
 //import { LinkContainer } from "react-router-bootstrap" ;
@@ -55,12 +57,6 @@ class Shoots extends React.Component {
 		this.handleShowAddShoot = this.handleShowAddShoot.bind(this) ;
 		this.handleCancelAddShoot = this.handleCancelAddShoot.bind(this) ;
 		this.handleActionAddShoot = this.handleActionAddShoot.bind(this) ;
-
-//		this.uploadFiles = this.uploadFiles.bind(this); 
-//		this.uploadFilesNow = this.uploadFilesNow.bind(this);
-//		this.sendRequest = this.sendRequest.bind(this);
-//		this.renderActions = this.renderActions.bind(this) ;
-
 	}
 
 	componentDidMount = () => {
@@ -97,7 +93,7 @@ class Shoots extends React.Component {
 			else {
 				this.setState( { shootid: null, folder: null, images: [] } );
 			}
-	}
+		}
 	}  
 		 
 	getFolders = () => {
@@ -124,7 +120,7 @@ class Shoots extends React.Component {
 
 			xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
 			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken );
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send() ;
 		}.bind( this ) ) ;
 	} 
@@ -138,8 +134,6 @@ class Shoots extends React.Component {
 
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
-			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken );
 
 			xhr.onerror = function () {
 				alert( "Error" ) ;
@@ -154,7 +148,10 @@ class Shoots extends React.Component {
 				}
 			}.bind(this);
 
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send(json);
+			
 		}.bind(this));
 	}
 
@@ -192,6 +189,34 @@ class Shoots extends React.Component {
 		});
 	}
 	
+	deleteImage = ( image ) => {
+
+		this.props.security.getAccessToken().then( function( accessToken ) {
+
+			var xhr = new XMLHttpRequest();
+
+			xhr.onerror = function() {
+				console.log( "Error deleting image" ) ;
+			} ;
+
+			xhr.onload = function () {
+//				var album = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+//					this.setState( { page: page } ) ;
+				} else {
+					console.log( "Error deleting image") ;
+				}
+			} ; //.bind(this) ;
+
+			xhr.open("DELETE", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+image.folderid+'/images/'+image.imageid, true ) ;
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.send() ;
+		}).catch ( function (error ) {
+			console.log( "Error deleting image", error ) ;
+		});
+	}
+	
 	getShootImages = ( shootid ) => {
 		var xhr = new XMLHttpRequest();
 
@@ -219,6 +244,7 @@ class Shoots extends React.Component {
 					, width: image.width
 					, height: image.height
 					, caption: image.title
+					, key: image.imageId 
 					}) 
 				}) ;
 
@@ -490,6 +516,35 @@ getExif( files ) {
 		) ;
 	}
 
+	onSortEnd = ({ oldIndex, newIndex }) => {
+    this.setState({ images:arrayMove(this.state.images, oldIndex, newIndex)});
+  };
+
+	onSelectImage = (event, { photo } ) => {
+//		console.log( 'Selected event ', event, photo ) ;
+		this.props.history.push( '/images/' + photo.key + "?shoot="+this.state.shootid ) ;
+	}
+
+	onDeleteImage = (event, photo, index ) => {
+
+//		console.log( 'delete ' + photo ) ;
+
+		var images = this.state.images ;
+
+		var filteredImages = images.filter(function(image){
+			return image.key !== photo.key ;
+		});
+
+		// delete shoot image
+//		var filteredAlbumImages = album.images.filter(function(image){
+//			return image.image !== photo.key ;
+//		});
+
+//		album.images = filteredAlbumImages ;
+
+		this.setState( { images: filteredImages } ) ;
+	}
+
 	renderShoot() {
 		var folder = this.state.folder ;
 		var images = this.state.images ;
@@ -502,18 +557,30 @@ getExif( files ) {
 				<Button variant="secondary" className='float-right mt-2 mr-2' size='sm' disabled onClick={this.openFileDialog}>Edit</Button>
 				<Button variant="success" className='float-right mt-2 mr-2' size='sm' onClick={this.openFileDialog}>Add</Button>
 				<input type="file" name="img" multiple ref={this.fileInputRef} onChange={this.onFilesAddedButton} style={{display:'none'}} accept=".jpg, .png, .jpeg, .gif|image/*"/>
-			 	<Gallery 
-					photos={images} 
-					onClick={this.openLightbox} 
-//					margin={5}
-//					targetRowHeight={500}
-//					direction="column"
-//					columns={this.columns}
+				<SortableGallery 
+					items={images} 
+					onSortEnd={this.onSortEnd} 
+					axis={"xy"} 
+					onClick={this.onSelectImage} 
+					onDelete={this.onDeleteImage}					
+					margin={5}
+					targetRowHeight={500}
 				/>
 				{this.renderAddImages()} 
 			</Container>
 		);
 	}
+
+	/*
+	/			 	<Gallery 
+//					photos={images} 
+//					onClick={this.openLightbox} 
+//					margin={5}
+//					targetRowHeight={500}
+//					direction="column"
+//					columns={this.columns}
+//				/>
+*/
 
 	handleAddImagesClose = () => {
 		this.getShootImages( this.state.shootid ) ;
@@ -672,7 +739,7 @@ getExif( files ) {
 		var files = this.state.files ;
 
 		return (
-			<Modal size="lg" className="add-shoot-images" show={this.state.showAddImages} >
+			<Modal size="lg" className="add-shoot-images" show={this.state.showAddImages}>
 				<Modal.Header closeButton>
 					<Modal.Title>Add Images</Modal.Title>
 				</Modal.Header>
@@ -681,7 +748,7 @@ getExif( files ) {
 						return (
 							<Card key={index} id={index} className="mb-2">
 								<Card.Body className={ file.deselected ? "add-shoot-image" : "add-shoot-image-selected" }>
-									  <Card.Img id={index} src={URL.createObjectURL(file)} alt="Card Image" onClick={this.handleAddImageToggle}/>
+									<Card.Img id={index} src={URL.createObjectURL(file)} alt="Card Image" onClick={this.handleAddImageToggle}/>
 										{this.renderProgress(file)}
 										<InputGroup className="mt-1">
 										<InputGroup.Prepend>
@@ -732,7 +799,7 @@ getExif( files ) {
 	
   render() {
 
-		var folder = this.state.folder ;
+		var { folder } = this.state ;
 
 		return( 
 			( this.state.folders.length === 0 )

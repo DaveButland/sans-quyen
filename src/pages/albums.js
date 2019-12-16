@@ -169,25 +169,25 @@ class Albums extends React.Component {
 				let response = JSON.parse( xhr.response ) ;
 				var shootImages = response ;
 
-//				albumImages.forEach( image => image.src = "https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-1200" ) ;
+//				shootImages.forEach( image => image.src = "https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-1200" ) ;
 
-//				var images = shootImages.map( ( image ) => { 
-//					return({
-//					,	srcSet: [
-//							"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-300 300w"
+				var images = shootImages.map( ( image ) => { 
+					return({
+						srcSet: [
+							"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-300 300w"
 //						+	", https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-600 600w"
 //						+	", https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-900 900w"
 //						+	", https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-1200 1200w"
-//						]
-//					,	sizes: ["(min-width: 480px) 50vw,(min-width: 1024px) 33.3vw,100vw"]
-//					, width: image.width
-//					, height: image.height
-//					, caption: image.title
-//					, key: image.imageId 
-//					}) 
-//				}) ;
+						]
+					,	sizes: ["(min-width: 480px) 50vw,(min-width: 1024px) 33.3vw,100vw"]
+					, width: image.width
+					, height: image.height
+					, caption: image.title
+					, key: image.imageId 
+					}) 
+				}) ;
 
-				this.setState( { shootid: shootid, shootImages: shootImages } ) ;
+				this.setState( { shootid: shootid, shootImages: shootImages, shootPhotos: images } ) ;
 			} else {
 				console.log( "Error getting shoot images for shoot "+shootid ) ;
 			}
@@ -264,7 +264,7 @@ class Albums extends React.Component {
 
 		var json = JSON.stringify( album ) ;
 
-//		this.props.security.getAccessToken().then( function( accessToken ) {
+		this.props.security.getAccessToken().then( function( accessToken ) {
 
 			var xhr = new XMLHttpRequest();
 
@@ -284,11 +284,11 @@ class Albums extends React.Component {
 
 			xhr.open("PUT", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums/'+album.albumid, true ) ;
 			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-	//		xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send(json) ;
-	//	}).catch ( function (error ) {
-	//		console.log( "Error updating album", error ) ;
-	//	});
+		}).catch ( function (error ) {
+			console.log( "Error updating album", error ) ;
+		});
 	}
 
 	deleteAlbum = ( album ) => {
@@ -522,8 +522,9 @@ class Albums extends React.Component {
 		) ;
 	}
 
-	onSelectImage = (event) => {
-		console.log( 'Selected event ', event ) ;
+	onSelectImage = (event, { photo } ) => {
+//		console.log( 'Selected event ', event, photo ) ;
+		this.props.history.push( '/images/' + photo.key + "?album="+this.state.albumid ) ;
 	}
 
 	onDeleteImage = (event, photo, index ) => {
@@ -670,16 +671,20 @@ class Albums extends React.Component {
 				</Modal.Title>
 				</Modal.Header>
 				<Modal.Body style={{'maxHeight': 'calc(100vh - 200px)', 'overflowY': 'auto'}}>
+					<Row>
 					{ shootImages.map( ( image, index ) => {
+						var imageClass = "add-image" ;
+						var imageBorder = "light" ;
+						if ( image.selected ) { imageClass = "add-image-selected" ; imageBorder="primary" ;}
 						return (
-							<Card key={index} id={index} className="mb-2" onClick={this.handleAddImageToggle}>
-								{ image.selected 
-								? <Card.Body className="add-image-selected"><Card.Img className="add-image-selected" style={{width:100+'%', height:'auto'}}	src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-300"} alt="image.title" /></Card.Body>
-								: <Card.Body className="add-image"><Card.Img className="add-image" style={{width:100+'%', height:'auto'}} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-300"} alt="image.title" /></Card.Body>
-								}	
+							<Col lg={4} key={index} className={"px-1 py-1"}>
+							<Card classname={imageClass} border={imageBorder} key={index} id={index} className="mb-2 p-1" onClick={this.handleAddImageToggle}>
+								<Card.Img className={imageClass} style={{width:100+'%', height:'auto'}}	src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-300"} alt="image.title" />
 							</Card>
+							</Col>
 						);
 					})}
+					</Row>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" size="sm" onClick={this.handleAddImagesClose}>
@@ -709,84 +714,3 @@ class Albums extends React.Component {
 }
 
 export default Albums ;
-
-
-/*
-						<Dropdown>
-							<Dropdown.Toggle variant="success" id="dropdown-basic" size="sm" >
-    						{album.title}
-					 	 	</Dropdown.Toggle>
-							<Dropdown.Menu>
-								{ folders.map ( folder => {
-									return ( <Dropdown.Item>{folder.folderName}</Dropdown.Item> ) ;
-								})}
-  						</Dropdown.Menu>
-						</Dropdown>						
-
-
-
-
-// The forwardRef is important!!
-// Dropdown needs access to the DOM node in order to position the Menu
-const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  <a
-    href=""
-    ref={ref}
-    onClick={e => {
-      e.preventDefault();
-      onClick(e);
-    }}
-  >
-    {children}
-    &#x25bc;
-  </a>
-));
-
-// forwardRef again here!
-// Dropdown needs access to the DOM of the Menu to measure it
-const CustomMenu = React.forwardRef(
-  ({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
-    const [value, setValue] = useState('');
-
-    return (
-      <div
-        ref={ref}
-        style={style}
-        className={className}
-        aria-labelledby={labeledBy}
-      >
-        <FormControl
-          autoFocus
-          className="mx-3 my-2 w-auto"
-          placeholder="Type to filter..."
-          onChange={e => setValue(e.target.value)}
-          value={value}
-        />
-        <ul className="list-unstyled">
-          {React.Children.toArray(children).filter(
-            child =>
-              !value || child.props.children.toLowerCase().startsWith(value),
-          )}
-        </ul>
-      </div>
-    );
-  },
-);
-
-render(
-  <Dropdown>
-    <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-      Custom toggle
-    </Dropdown.Toggle>
-
-    <Dropdown.Menu as={CustomMenu}>
-      <Dropdown.Item eventKey="1">Red</Dropdown.Item>
-      <Dropdown.Item eventKey="2">Blue</Dropdown.Item>
-      <Dropdown.Item eventKey="3" active>
-        Orange
-      </Dropdown.Item>
-      <Dropdown.Item eventKey="1">Red-Orange</Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>,
-);
-*/
