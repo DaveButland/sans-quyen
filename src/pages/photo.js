@@ -15,7 +15,7 @@ const Photo = ({ index, onClick, onDelete, photo, margin, direction, top, left }
   }
 
   const handleClick = event => {
-		console.log( event ) ;
+//		console.log( event ) ;
     onClick(event, { photo, index });
   };
 

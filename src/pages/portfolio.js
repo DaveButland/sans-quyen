@@ -157,18 +157,23 @@ class Portfolio extends React.Component {
 		return (
  	  	<Container fluid style={{ paddingTop:70, paddingLeft: 5+'%', paddingRight: 5+'%' }}>
 			{ !modalIsOpen
-        ? <Navbar style={{paddingTop:0, paddingRight:70}} bg="white" variant="light" fixed="top">
-					<Navbar.Toggle aria-controls="basic-navbar-nav" />
-					<Navbar.Collapse id="basic-navbar-nav">
-						<Nav className="ml-auto">
-						<LinkContainer to="/about">
-	     					<Nav.Link className="quyen-contact" href="/about">About</Nav.Link>
-							</LinkContainer>
-						  <LinkContainer to="/contact">
-	     					<Nav.Link className="quyen-contact" href="/contact">Contact</Nav.Link>
-							</LinkContainer>
-    				</Nav>
-					</Navbar.Collapse>
+        ? <Navbar style={{paddingTop:0, paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+						<Navbar.Brand className="quyen-contact">
+						</Navbar.Brand>
+						<Navbar.Toggle aria-controls="basic-navbar-nav" />
+						<Navbar.Collapse id="basic-navbar-nav">
+							<Nav className="ml-auto justify-content-end">
+								<LinkContainer to="/about">
+	     						<Nav.Link className="quyen-contact" href="/about">About</Nav.Link>
+								</LinkContainer>
+								<LinkContainer to="/portfolio">
+	     						<Nav.Link className="quyen-contact" href="/about/portfolio">Portfolio</Nav.Link>
+								</LinkContainer>
+							  <LinkContainer to="/contact">
+	     						<Nav.Link className="quyen-contact" href="/contact">Contact</Nav.Link>
+								</LinkContainer>
+    					</Nav>
+						</Navbar.Collapse>
 					</Navbar>
 				: <Fragment></Fragment>}
 				<LinkContainer to="/">

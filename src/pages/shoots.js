@@ -1,6 +1,6 @@
 import React from "react";
-import { Container, Card, Row, Col, Button, Modal, ProgressBar, FormControl, InputGroup } from "react-bootstrap";
-//import Gallery from "react-photo-gallery" ;
+import { Container, Card, Row, Col, Button, Modal, ProgressBar, FormControl, InputGroup, Navbar, Nav } from "react-bootstrap";
+//import {LinkContainer} from "react-router-bootstrap" ;
 import arrayMove from "array-move" ;
 import SortableGallery from "./sortablegallery";
 import EXIF from "exif-js" ;
@@ -126,7 +126,6 @@ class Shoots extends React.Component {
 	} 
 
 	addShoot( name ) {
-		
 		this.props.security.getAccessToken().then( function( accessToken ) {
 			var shoot = {};
 			shoot.folderName = name ;
@@ -160,9 +159,6 @@ class Shoots extends React.Component {
 	}
 
 	deleteFolder= ( folder ) => {
-
-		var json = JSON.stringify( folder ) ;
-
 		this.props.security.getAccessToken().then( function( accessToken ) {
 
 			var xhr = new XMLHttpRequest();
@@ -183,6 +179,8 @@ class Shoots extends React.Component {
 			xhr.open("DELETE", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+folder.folderid, true ) ;
 			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+
+			var json = JSON.stringify( folder ) ;
 			xhr.send(json) ;
 		}).catch ( function (error ) {
 			console.log( "Error deleting folder", error ) ;
@@ -190,7 +188,6 @@ class Shoots extends React.Component {
 	}
 	
 	deleteImage = ( image ) => {
-
 		this.props.security.getAccessToken().then( function( accessToken ) {
 
 			var xhr = new XMLHttpRequest();
@@ -218,51 +215,160 @@ class Shoots extends React.Component {
 	}
 	
 	getShootImages = ( shootid ) => {
-		var xhr = new XMLHttpRequest();
+		this.props.security.getAccessToken().then( function( accessToken ) {
+			var xhr = new XMLHttpRequest();
 
-		xhr.onerror = function () {
-			console.log( "Error getting folder images for folder "+shootid ) ;
-		}
+			xhr.onerror = function () {
+				console.log( "Error getting folder images for folder "+shootid ) ;
+			}
 
-		xhr.onload = function () {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				let response = JSON.parse( xhr.response ) ;
-				var shootImages = response ;
+			xhr.onload = function () {
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					let response = JSON.parse( xhr.response ) ;
+					var shootImages = response ;
 
 //				albumImages.forEach( image => image.src = "https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-1200" ) ;
 
-				var images = shootImages.map( image => { 
-					return({
-						src:"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-900"
-					,	srcSet: [
+					var images = shootImages.map( image => { 
+						return({
+							src:"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-900"
+						,	srcSet: [
 							"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-900 900w"
 //						+	", https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-600 600w"
 //						+	", https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-900 900w"
 //						+	", https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-1200 1200w"
-						]
-					,	sizes: ["(min-width: 480px) 50vw,(min-width: 1024px) 33.3vw,100vw"]
-					, width: image.width
-					, height: image.height
-					, caption: image.title
-					, key: image.imageId 
-					}) 
-				}) ;
+							]
+						,	sizes: ["(min-width: 480px) 50vw,(min-width: 1024px) 33.3vw,100vw"]
+						, width: image.width
+						, height: image.height
+						, caption: image.title
+						, key: image.imageId 
+						}) 
+					}) ;
 
-				this.setState( { images: images } ) ;
-			} else {
-				console.log( "Error getting shoot images for shoot "+shootid ) ;
-			}
-		}.bind(this) ;
+					this.setState( { images: images } ) ;
+				} else {
+					console.log( "Error getting shoot images for shoot "+shootid ) ;
+				}
+			}.bind(this) ;
 		
-		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+shootid+'/images', true ) ;
-//		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums/f7b63276-0be4-4658-9d9c-cc620dc6aba5/images', true ) ;
-//		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/public?domain='+process.env.REACT_APP_HTML_DOMAIN, true ) ;
-		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-		
-		xhr.send();
+			xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+shootid+'/images', true ) ;
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.send() ;
+		}.bind(this)).catch ( function (error ) {
+			console.log( "Error deleting image", error ) ;
+		});
 	}
 
-getExif( files ) {
+	addImage = file => {
+		return new Promise((resolve, reject) => {
+			this.props.security.getAccessToken().then( function( accessToken ) {
+				var image = { folderId: this.state.shootid, name: file.name, type: file.type, size: file.size, height: file.height, width: file.width } ;
+
+				var json = JSON.stringify(image);
+
+				var xhr = new XMLHttpRequest();
+
+				xhr.onload = function () {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						var result = JSON.parse( xhr.response ) ;
+						var signedURL = result.signedURL ;
+						image   = result.image ;
+						this.sendRequest(signedURL, file).then( function( value ) { 
+							//this is the point that the image should be added to the database.
+							this.updateImage( image ) ;
+							resolve(xhr.response); 
+						}.bind(this)) ;
+					} else {
+						alert( "Error creating new image") ;
+						reject(xhr.response);
+					}
+				}.bind(this);
+
+				xhr.open( "POST", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images', true ) ; 
+				xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+				xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+				xhr.send(json);
+			}.bind(this)).catch ( function (error ) {
+				console.log( "Error deleting image", error ) ;
+			});
+		});
+	}
+
+	updateImage = image => {
+		this.props.security.getAccessToken().then( function( accessToken ) {
+
+			var json = JSON.stringify( image ) ;
+
+			var xhr = new XMLHttpRequest();
+
+			xhr.onerror = function() {
+				console.log( "Error updating image" ) ;
+			} ;
+
+			xhr.onload = function () {
+//				var album = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+//					this.setState( { page: page } ) ;
+				} else {
+					console.log( "Error updating image") ;
+				}
+			} ; //.bind(this) ;
+
+			xhr.open("PUT", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/'+image.imageId, true ) ;
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.send(json) ;
+
+		}).catch ( function (error ) {
+			console.log( "Error updating image", error ) ;
+		});
+	}
+
+	sendRequest(signedURL, file) {
+		return new Promise((resolve, reject) => {
+		
+			const req = new XMLHttpRequest();
+//			const reqsigned = new XMLHttpRequest();
+
+			req.upload.addEventListener("progress", event => {
+				if (event.lengthComputable) {
+					const copy = { ...this.state.uploadProgress };
+					copy[file.name] = {
+						state: "pending",
+						percentage: (event.loaded / event.total) * 100
+					};
+					this.setState({ uploadProgress: copy });
+				}
+			});
+
+			req.upload.addEventListener("load", event => {
+				const copy = { ...this.state.uploadProgress };
+				copy[file.name] = { state: "done", percentage: 100 };
+				this.setState({ uploadProgress: copy });
+				resolve(req.response);
+			});
+
+			req.upload.addEventListener("error", event => {
+				const copy = { ...this.state.uploadProgress };
+				copy[file.name] = { state: "error", percentage: 0 };
+				this.setState({ uploadProgress: copy });
+				reject(req.response);
+			});
+		
+		// Tempted to use both signed URL and custom authenticator here
+		// It is both belt and braces, and unnecessary as you won't be able to get the signed URL without the JWT token
+		// but it will demonstrate the security of the platform and mean that we generate unique 
+		// also want to use Federated Identity Pools to ensure that only the right people can write files
+
+			req.open("PUT", signedURL );
+//			req.setRequestHeader( "Authorization", "Bearer "+this.props.token );
+			req.send(file) ;
+		});
+	}
+
+	getExif( files ) {
 		files.map( file => {
     	var fr = new FileReader() ; // to read file contents
 
@@ -476,14 +582,17 @@ getExif( files ) {
 
 	renderShoots() {
 		return (
-			<Container fluid style={{ paddingLeft: 70, paddingRight: 70 }}>
-				<Row>
-					<Col>
-						<h1 className="d-inline mt-3 mr-2">Shoots</h1>
-						<Button variant="primary" className='float-right mt-2' size='sm' onClick={this.onBack}>Back</Button>
-						<Button variant="success" className='float-right mt-2 mr-2' size='sm' onClick={this.handleShowAddShoot}>Add</Button> 
-					</Col>
-				</Row>
+			<Container fluid style={{ marginTop: '70px', paddingLeft: '5%', paddingRight: '5%' }}>
+				<Navbar style={{paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+					<Navbar.Brand>Shoots</Navbar.Brand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
+					<Navbar.Collapse id="basic-navbar-nav">
+						<Nav className="ml-auto justify-content-end">
+						<Button variant="success" className='mt-2 mr-2' size='sm' onClick={this.handleShowAddShoot}>Add</Button> 
+							<Button variant="primary" className='mt-2 mr-2' size='sm' onClick={this.onBack}>Back</Button>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
 				<Row>
 					{ this.state.folders.map( ( folder, index ) => {
 						var date ;
@@ -500,9 +609,11 @@ getExif( files ) {
 								<Card draggable className="text-center img-container" onClick={this.handleFolderClick} id={folder.folderId} key={folder.folderId} style={{height:250+'px'}} >
 									<Card.Header>{name}</Card.Header>
 									{ !folder.cover 
-									? <Card.Body></Card.Body>
+									? <div className="album-image" id={folder.folderId} >
+											<Card.Img className="img-image" key={folder.folderId} style={{width:'auto', height:'100%'}} src='/camera.svg' alt={folder.folderName} />
+										</div>
 									: <div className="album-image" id={folder.folderId} >
-											<Card.Img className="img-image" key={folder.folderId} style={{width:100+'%', height:'auto'}} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+folder.cover.folderId+"/"+folder.cover.imageId+'-300' } alt="folder.folderName" />
+											<Card.Img className="img-image" key={folder.folderId} style={{width:100+'%', height:'auto'}} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+folder.cover.folderId+"/"+folder.cover.imageId+'-300' } alt={folder.folderName} />
 										</div>
 									}
 									<Card.Footer>{date}</Card.Footer>
@@ -550,12 +661,20 @@ getExif( files ) {
 		var images = this.state.images ;
 //		const { modalIsOpen } = this.state;
 
+
 		return (				
-			<Container fluid style={{ paddingLeft: 70, paddingRight: 70 }}>
-				<h1 className="d-inline mt-3 ml-2">{folder.folderName}</h1>
-				<Button variant="primary" className='float-right mt-2 mr-2' size='sm' onClick={this.onBack}>Back</Button>
-				<Button variant="secondary" className='float-right mt-2 mr-2' size='sm' disabled onClick={this.openFileDialog}>Edit</Button>
-				<Button variant="success" className='float-right mt-2 mr-2' size='sm' onClick={this.openFileDialog}>Add</Button>
+			<Container fluid style={{ marginTop: '70px', paddingLeft: '5%', paddingRight: '5%' }}>
+				<Navbar style={{paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+					<Navbar.Brand>{folder.folderName}</Navbar.Brand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
+					<Navbar.Collapse id="basic-navbar-nav">
+						<Nav className="ml-auto justify-content-end">
+							<Button variant="success" className='mt-2 mr-2' size='sm' onClick={this.openFileDialog}>Add</Button>
+							<Button variant="secondary" className='mt-2 mr-2' size='sm' disabled onClick={this.openFileDialog}>Edit</Button>
+							<Button variant="primary" className='mt-2 mr-2' size='sm' onClick={this.onBack}>Back</Button>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
 				<input type="file" name="img" multiple ref={this.fileInputRef} onChange={this.onFilesAddedButton} style={{display:'none'}} accept=".jpg, .png, .jpeg, .gif|image/*"/>
 				<SortableGallery 
 					items={images} 
@@ -599,111 +718,6 @@ getExif( files ) {
 		this.setState( { files: files } ) ;
 	}
 	
-	addImage = file => {
-		return new Promise((resolve, reject) => {
-
-			var image = { folderId: this.state.shootid, name: file.name, type: file.type, size: file.size, height: file.height, width: file.width } ;
-
-			var json = JSON.stringify(image);
-
-			var xhr = new XMLHttpRequest();
-
-			xhr.onload = function () {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					var result = JSON.parse( xhr.response ) ;
-					var signedURL = result.signedURL ;
-					image   = result.image ;
-					this.sendRequest(signedURL, file).then( function( value ) { 
-						//this is the point that the image should be added to the database.
-							this.updateImage( image ) ;
-							resolve(xhr.response); 
-					}.bind(this)) ;
-				} else {
-					alert( "Error creating new image") ;
-					reject(xhr.response);
-				}
-			}.bind(this);
-
-			xhr.open( "POST", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images', true ) ; 
-			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-			xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
-			xhr.send(json);
-		});
-	}
-
-	updateImage = image => {
-
-		this.props.security.getAccessToken().then( function( accessToken ) {
-
-			var json = JSON.stringify( image ) ;
-
-			var xhr = new XMLHttpRequest();
-
-			xhr.onerror = function() {
-				console.log( "Error updating image" ) ;
-			} ;
-
-			xhr.onload = function () {
-//				var album = JSON.parse(xhr.responseText);
-				if (xhr.readyState === 4 && xhr.status === 200) {
-//					this.setState( { page: page } ) ;
-				} else {
-					console.log( "Error updating image") ;
-				}
-			} ; //.bind(this) ;
-
-			xhr.open("PUT", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/'+image.imageId, true ) ;
-			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
-			xhr.send(json) ;
-
-		}).catch ( function (error ) {
-			console.log( "Error updating image", error ) ;
-		});
-	}
-
-	sendRequest(signedURL, file) {
-    return new Promise((resolve, reject) => {
-      
-			const req = new XMLHttpRequest();
-//			const reqsigned = new XMLHttpRequest();
-
-      req.upload.addEventListener("progress", event => {
-        if (event.lengthComputable) {
-          const copy = { ...this.state.uploadProgress };
-          copy[file.name] = {
-            state: "pending",
-            percentage: (event.loaded / event.total) * 100
-          };
-          this.setState({ uploadProgress: copy });
-        }
-      });
-
-      req.upload.addEventListener("load", event => {
-        const copy = { ...this.state.uploadProgress };
-        copy[file.name] = { state: "done", percentage: 100 };
-        this.setState({ uploadProgress: copy });
-        resolve(req.response);
-      });
-
-      req.upload.addEventListener("error", event => {
-        const copy = { ...this.state.uploadProgress };
-        copy[file.name] = { state: "error", percentage: 0 };
-        this.setState({ uploadProgress: copy });
-        reject(req.response);
-			});
-			
-			// Tempted to use both signed URL and custom authenticator here
-			// It is both belt and braces, and unnecessary as you won't be able to get the signed URL without the JWT token
-			// but it will demonstrate the security of the platform and mean that we generate unique 
-			// also want to use Federated Identity Pools to ensure that only the right people can write files
-
-			req.open("PUT", signedURL );
-//			req.setRequestHeader( "Authorization", "Bearer "+this.props.token );
-			req.send(file) ;
-    });
-  }
-
 	handleAddImagesAdd = async () => {
 
 		this.setState({ uploadProgress: {}, uploading: true, addpressed: true });
@@ -802,9 +816,7 @@ getExif( files ) {
 		var { folder } = this.state ;
 
 		return( 
-			( this.state.folders.length === 0 )
-			? <Container></Container>
-			: ( !folder )
+			( !folder )
 			?	this.renderShoots() 
 			: this.renderShoot() 
 		) ;

@@ -1,8 +1,8 @@
 .quyenle-name {
-	padding-top: 50px ;
-	padding-bottom: 30px ;
+	padding-top: 3% ;
+	padding-bottom: 3% ;
 	font-family: "ThuFap", serif;
-	font-size: 600% ;
+	font-size: 10vw ;
 }
 
 .quyenle-name a {
@@ -15,7 +15,7 @@
 }
 
 .quyen-contact {
-	font-size: 25px ;
+	font-size: 200% !important;
 }
 
 .portfolioTitle {

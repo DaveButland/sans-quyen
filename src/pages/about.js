@@ -11,20 +11,23 @@ class About extends React.Component {
 	{
 		return (
 	  	<Container style={{ paddingTop:70 }}>
-        <Navbar style={{paddingTop:20, paddingRight:70}} bg="white" variant="light" fixed="top">
+        <Navbar style={{paddingTop:0, paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+					<Navbar.Brand className="quyen-contact"></Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav">
-						<Nav className="ml-auto">
-						<LinkContainer to="/portfolio">
-	     					<Nav.Link className="quyen-contact" href="/Portfolio">Portfolio</Nav.Link>
+						<Nav className="ml-auto justify-content-end">
+							<LinkContainer to="/about">
+	    					<Nav.Link className="quyen-contact" href="/about">About</Nav.Link>
+							</LinkContainer>
+							<LinkContainer to="/portfolio">
+	     					<Nav.Link className="quyen-contact" href="/about/portfolio">Portfolio</Nav.Link>
 							</LinkContainer>
 						  <LinkContainer to="/contact">
-	     					<Nav.Link className="quyen-contact" href="/contact">Contact</Nav.Link>
+	   						<Nav.Link className="quyen-contact" href="/contact">Contact</Nav.Link>
 							</LinkContainer>
     				</Nav>
 					</Navbar.Collapse>
-					</Navbar>
-				<h1>About</h1>
+				</Navbar>
 				<Accordion defaultActiveKey="0">
 					<Card>
 					<Accordion.Toggle className="about-header" as={Card.Header} eventKey="0">
@@ -35,7 +38,7 @@ class About extends React.Component {
 								<p>
 									I am a freelance model with a variety of experience covering a wide range of different levels. 
 									I am originally from Vietnam but currently based in Cambridgeshire, UK. 
-									I can travel easily to London, Birmingham and the rest of the UK easily and I am often on tour as I enjoy travelling. 
+									I can travel to London, Birmingham and the rest of the UK easily and I am often on tour as I enjoy travelling. 
 									If you would like to work with me then please use my contact page to get in touch and I will get back to you as soon as possible. 
 								</p>
 								<p>
@@ -64,7 +67,7 @@ class About extends React.Component {
 								</p>
 								<Table striped bordered style={{maxWidth: 600}}>
  									<thead>
-										<tr><th>Measurements</th>
+										<tr><th></th>
 											<th className="about-table-header" width="20%" align="center">UK</th>
 											<th className="about-table-header" width="20%" align="center">EU</th>
 											<th className="about-table-header" width="20%" align="center">US</th></tr>

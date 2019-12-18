@@ -1,6 +1,6 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
-import {Container, Row, Col, Form, FormControl, Button, Image} from "react-bootstrap" ;
+import {Container, Row, Col, Form, FormControl, Button, Image, Navbar, Nav} from "react-bootstrap" ;
 //import {LinkContainer} from "react-router-bootstrap" ;
 import Draggable from 'react-draggable';
 
@@ -171,13 +171,14 @@ class Images extends React.Component {
 		var { image } = this.state ;
 
 		var imageScreenWidth=0 ;
-		var imageScreenHeight=0 ;
+//		var imageScreenHeight=0 ;
 		if ( row ) {
 			imageScreenWidth = row.clientWidth-30 ;
-			imageScreenHeight = Math.round( imageScreenWidth * image.height / image.width ) ;
+//			imageScreenHeight = Math.round( imageScreenWidth * image.height / image.width ) ;
 		}
 
-		var boxSize = ( imageScreenWidth > imageScreenHeight ) ? imageScreenHeight : imageScreenWidth ;
+		var boxSize = 100 ;
+//		var boxSize = ( imageScreenWidth > imageScreenHeight ) ? imageScreenHeight : imageScreenWidth ;
 
 		image.centreX = Math.round( ( data.x + 15 + boxSize / 2 ) * image.width / imageScreenWidth ) ;
 		image.centreY = Math.round( image.height + ( data.y + boxSize / 2 ) * image.width / imageScreenWidth ) ;
@@ -191,13 +192,14 @@ class Images extends React.Component {
 		var { image } = this.state ;
 
 		var imageScreenWidth=0 ;
-		var imageScreenHeight=0 ;
+//		var imageScreenHeight=0 ;
 		if ( row ) {
 			imageScreenWidth = row.clientWidth-30 ;
-			imageScreenHeight = Math.round( imageScreenWidth * image.height / image.width ) ;
+//			imageScreenHeight = Math.round( imageScreenWidth * image.height / image.width ) ;
 		}
 
-		var boxSize = ( imageScreenWidth > imageScreenHeight ) ? imageScreenHeight : imageScreenWidth ;
+		var boxSize = 100 ;
+//		var boxSize = ( imageScreenWidth > imageScreenHeight ) ? imageScreenHeight : imageScreenWidth ;
 
 		image.centreX = Math.round( ( data.x + 15 + boxSize / 2 ) * image.width / imageScreenWidth ) ;
 		image.centreY = Math.round( image.height + ( data.y + boxSize / 2 ) * image.width / imageScreenWidth ) ;
@@ -239,7 +241,8 @@ class Images extends React.Component {
 			imageScreenHeight = Math.round( imageScreenWidth * image.height / image.width ) ;
 		}
 
-		var boxSize = ( imageScreenWidth > imageScreenHeight ) ? imageScreenHeight : imageScreenWidth ;
+		var boxSize = 100 ;
+//		var boxSize = ( imageScreenWidth > imageScreenHeight ) ? imageScreenHeight : imageScreenWidth ;
 		var axis = ( imageScreenWidth > imageScreenHeight ) ? "x" : "y" ;
 
 		var positionX = Math.round( ( image.centreX * imageScreenWidth / image.width ) - boxSize / 2 ) - 15  ; 
@@ -248,8 +251,19 @@ class Images extends React.Component {
 
 		return (
 			( imageid 
-			? <Container>
-					<h1>{(image.title ? image.title : "Untitled" )}</h1>
+			? <Container style={{marginTop: '70px'}}>
+					<Navbar style={{paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+						<Navbar.Brand>{(image.title ? image.title : "Untitled" )}</Navbar.Brand>
+						<Navbar.Toggle aria-controls="basic-navbar-nav" />
+						<Navbar.Collapse id="basic-navbar-nav">
+							<Nav className="ml-auto justify-content-end">
+								<Button className="m-1" size="sm" variant="success" disabled={!this.validateForm()} onClick={this.handleSubmit}>Save</Button>
+	 							<Button className="m-1" size="sm" variant="secondary" disabled>Prev</Button>
+								<Button className="m-1" size="sm" variant="secondary" disabled>Next</Button>
+								<Button className="m-1" size="sm" variant="primary" onClick={this.onBack}>Back</Button>
+							</Nav>
+						</Navbar.Collapse>
+					</Navbar>
 					<Row>
    					<Col sm={5} className="image-col">
 							<div>
@@ -269,7 +283,7 @@ class Images extends React.Component {
 								>
         					<div className="handle dragtest" style={{width: boxSize, height: boxSize }}></div>
       					</Draggable>
-							: <div></div>
+							: <div style={{position: 'absolute'}}></div>
 							)}
 							</div>
    			 		</Col>
@@ -371,10 +385,6 @@ class Images extends React.Component {
 	   								</Form.Group>
 									</Col>
 								</Row>
-							<Button className="m-1" size="sm" variant="primary" onClick={this.onBack}>Back</Button>
- 							<Button className="m-1" size="sm" variant="secondary" disabled>Prev</Button>
-							<Button className="m-1" size="sm" variant="secondary" disabled>Next</Button>
-							<Button className="m-1" size="sm" variant="success" disabled={!this.validateForm()} type="submit">Save</Button>
 						</Form>	
 						</Col>
 			  	</Row>

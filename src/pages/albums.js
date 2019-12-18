@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 //import { render } from "react-dom";
-import { Container, Card, Row, Col, Button, Modal, Dropdown, FormControl, InputGroup } from "react-bootstrap";
+import { Container, Card, Row, Col, Button, Modal, Dropdown, FormControl, InputGroup, Navbar, Nav } from "react-bootstrap";
 //import { LinkContainer } from "react-router-bootstrap" ;
 
 import arrayMove from "array-move";
@@ -136,25 +136,32 @@ class Albums extends React.Component {
 	}  
 		 
 	getShoots = () => {
-		var xhr = new XMLHttpRequest();
 
-		xhr.onerrror = function( error ) {
-			console.log( "Error getting folder", error ) ;
-		}
+		this.props.security.getAccessToken().then( function( accessToken ) {
 
-		xhr.onload = function () {
-			var shoots = JSON.parse(xhr.responseText);
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				shoots.sort( compareFolders ) ;
-				this.setState( { shoots: shoots  } ) ;
-			} else {
-				console.log( "Error getting folders") ;
+			var xhr = new XMLHttpRequest();
+
+			xhr.onerrror = function( error ) {
+				console.log( "Error getting folder", error ) ;
 			}
-		}.bind(this) ;
 
-		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
-		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-		xhr.send() ;
+			xhr.onload = function () {
+				var shoots = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					shoots.sort( compareFolders ) ;
+					this.setState( { shoots: shoots  } ) ;
+				} else {
+					console.log( "Error getting folders") ;
+				}
+			}.bind(this) ;
+
+			xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.send() ;
+		}.bind(this)).catch ( function (error ) {
+			console.log( "Error updating album", error ) ;
+		});
 	} 
 
 	getShootImages = ( shootid ) => {
@@ -286,7 +293,7 @@ class Albums extends React.Component {
 			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send(json) ;
-		}).catch ( function (error ) {
+		}.bind(this)).catch ( function (error ) {
 			console.log( "Error updating album", error ) ;
 		});
 	}
@@ -492,24 +499,28 @@ class Albums extends React.Component {
 
 	renderAlbums() {
 		return (
-			<Container fluid style={{ paddingLeft: 70, paddingRight: 70 }}>
-				<Row>
-					<Col>
-						<h1 className="d-inline mt-3 mr-2">Albums</h1>
-						<Button varient="primary" size="sm" className='float-right mt-2' onClick={this.onBack}>Back</Button>
-						<Button variant="success" size="sm" className='float-right mt-2 mr-2' onClick={this.handleShowAddAlbum}>Add</Button>
-					</Col>
-				</Row>
+			<Container fluid style={{ marginTop: '70px', paddingLeft: '5%', paddingRight: '5%' }}>
+				<Navbar style={{paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+					<Navbar.Brand>Albums</Navbar.Brand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
+					<Navbar.Collapse id="basic-navbar-nav">
+						<Nav className="ml-auto justify-content-end">
+							<Button variant="success" className='mt-2 mr-2' size='sm' onClick={this.handleShowAddAlbum}>Add</Button> 
+							<Button variant="primary" className='mt-2 mr-2' size='sm' onClick={this.onBack}>Back</Button>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
 				<Row>
 					{ this.state.albums.map( ( album, index ) => {
 						return (
 							<Col lg={2} key={album.albumid} className={"px-1 py-1"} >
 								<Card draggable className="text-center img-container" onClick={this.handleAlbumClick} id={album.albumid} key={album.albumid} style={{height:250+'px'}} >
-									{ album.cover
+									{ album.cover.image
 									? <div className="album-image" id={album.albumid} >
-											<Card.Img className="img-image" key={album.albumid} style={{width:100+'%', height:'auto'}} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+album.cover.folder+"/"+album.cover.image+'-300' } alt="album.title" />
+											<Card.Img className="img-image" key={album.albumid} style={{width:'100%', height:'auto'}} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+album.cover.folder+"/"+album.cover.image+'-300' } alt={album.title} />
 										</div>
-									: <div></div>
+									: <div>
+										</div>
 									}
 									<Card.Footer>{album.title}</Card.Footer>
 								</Card>
@@ -573,12 +584,19 @@ class Albums extends React.Component {
 		var images = this.state.images ;
 
 		return (				
-			<Container fluid style={{ paddingLeft: 70, paddingRight: 70 }}>
-				<h1 className="d-inline mt-3 ml-2">{album.title}</h1>
-				<Button variant="primary" className='float-right mt-2 mr-2' size="sm" onClick={this.onBack}>Back</Button>
-				<Button variant="secondary" size="sm" className='float-right mt-2 mr-2' disabled>Edit</Button>
-				<Button variant="success" size="sm" className='float-right mt-2 mr-2' onClick={this.handleAlbumSave}>Save</Button>
-				<Button variant="success" size="sm" className='float-right mt-2 mr-2' onClick={this.handleAddImagesShow}>Add</Button>
+			<Container fluid style={{ marginTop: '70px', paddingLeft: '5%', paddingRight: '5%' }}>
+				<Navbar style={{paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+					<Navbar.Brand>{album.title}</Navbar.Brand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
+					<Navbar.Collapse id="basic-navbar-nav">
+						<Nav className="ml-auto justify-content-end">
+							<Button variant="success" size="sm" className='mt-2 mr-2' onClick={this.handleAddImagesShow}>Add</Button>
+							<Button variant="success" size="sm" className='mt-2 mr-2' onClick={this.handleAlbumSave}>Save</Button>
+							<Button variant="secondary" size="sm" className='mt-2 mr-2' disabled>Edit</Button>
+							<Button variant="primary" className='mt-2 mr-2' size="sm" onClick={this.onBack}>Back</Button>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
 				<SortableGallery 
 					items={images} 
 					onSortEnd={this.onSortEnd} 
