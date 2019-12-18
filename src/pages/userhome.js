@@ -1,6 +1,6 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import {Container, Row, Col, Card } from "react-bootstrap" ;
+import {Container, Row, Col, Card, Navbar, Nav } from "react-bootstrap" ;
 import {LinkContainer} from "react-router-bootstrap" ;
 
 import "./userhome.css"
@@ -10,8 +10,15 @@ class UserHome extends React.Component {
 	render()
 	{
 		return (
-	  	<Container>
-				<h1>Home</h1>
+ 			<Container style={{ marginTop: '70px', paddingLeft: '5%', paddingRight: '5%' }}>
+				<Navbar style={{paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
+					<Navbar.Brand>Home</Navbar.Brand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
+					<Navbar.Collapse id="basic-navbar-nav">
+						<Nav className="ml-auto justify-content-end">
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
 				<Row>
 					<Col>
 						<LinkContainer to="/shoots">

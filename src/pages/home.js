@@ -32,7 +32,7 @@ class Home extends React.Component {
 		xhr.onload = function () {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				let response = JSON.parse( xhr.response ) ;
-
+				
 //				this.props.security.getAccessToken().then( function (accessToken ) { console.log( accessToken.getJwtToken() )} ) ;
 			
 				// check if logged in before setting cookie. Only set these cookies if not logged in

@@ -28,6 +28,7 @@ class About extends React.Component {
     				</Nav>
 					</Navbar.Collapse>
 				</Navbar>
+				<h1>About</h1>
 				<Accordion defaultActiveKey="0">
 					<Card>
 					<Accordion.Toggle className="about-header" as={Card.Header} eventKey="0">
