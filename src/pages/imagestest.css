@@ -1,0 +1,13 @@
+.imagebounds {
+	top: 50px ;
+	left: 50px ;
+	height: calc(100vh - 270px) !important ;
+	width: calc(50vw - 100px ) !important; 
+	position: relative ;
+	overflow: hidden !important;
+}
+
+.imageboundscard { 
+	position: relative ;
+	overflow: hidden !important;	
+}

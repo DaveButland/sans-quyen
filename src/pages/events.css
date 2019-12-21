@@ -1,0 +1,7 @@
+.event-container {
+	min-height: calc(100vh - 140px);
+}
+
+.event-header:hover { 
+	background-color: #EEE
+}

@@ -10,24 +10,28 @@ class About extends React.Component {
 	render()
 	{
 		return (
-	  	<Container style={{ paddingTop:70 }}>
+	  	<Container style={{ paddingTop:70, paddingBottom: 70 }}>
         <Navbar style={{paddingTop:0, paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
 					<Navbar.Brand className="quyen-contact"></Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav">
-						<Nav className="ml-auto justify-content-end">
-							<LinkContainer to="/about">
-	    					<Nav.Link className="quyen-contact" href="/about">About</Nav.Link>
-							</LinkContainer>
+					<Nav className="ml-auto justify-content-end">
 							<LinkContainer to="/portfolio">
-	     					<Nav.Link className="quyen-contact" href="/about/portfolio">Portfolio</Nav.Link>
+	     					<Nav.Link className="quyen-contact" href="/about/portfolio">portfolio</Nav.Link>
+							</LinkContainer>
+							<LinkContainer to="/about">
+	    					<Nav.Link className="quyen-contact" href="/about">about</Nav.Link>
+							</LinkContainer>
+							<LinkContainer to="/events">
+	    					<Nav.Link className="quyen-contact" href="/events">events</Nav.Link>
 							</LinkContainer>
 						  <LinkContainer to="/contact">
-	   						<Nav.Link className="quyen-contact" href="/contact">Contact</Nav.Link>
+	   						<Nav.Link className="quyen-contact" href="/contact">contact</Nav.Link>
 							</LinkContainer>
     				</Nav>
 					</Navbar.Collapse>
 				</Navbar>
+				<div className="about-container" >
 				<h1>About</h1>
 				<Accordion defaultActiveKey="0">
 					<Card>
@@ -87,6 +91,10 @@ class About extends React.Component {
     				</Accordion.Collapse>
   				</Card>
 				</Accordion>
+				</div>
+        <Navbar bg="white" variant="light" sticky="bottom">
+					<Navbar.Brand><small>&copy; Quyen Le 2019</small></Navbar.Brand>
+				</Navbar>
 			</Container>
 		) ;
 	}

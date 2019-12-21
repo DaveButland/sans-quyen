@@ -155,27 +155,31 @@ class Portfolio extends React.Component {
 		const { modalIsOpen } = this.state;
 		
 		return (
- 	  	<Container fluid style={{ paddingTop:70, paddingLeft: 5+'%', paddingRight: 5+'%' }}>
+ 	  	<Container fluid style={{ paddingTop:'70px', paddingLeft: 5+'%', paddingRight: 5+'%' }}>
 			{ !modalIsOpen
         ? <Navbar style={{paddingTop:0, paddingLeft:'5%', paddingRight:'5%'}} bg="white" variant="light" fixed="top" expand="lg">
 						<Navbar.Brand className="quyen-contact">
 						</Navbar.Brand>
 						<Navbar.Toggle aria-controls="basic-navbar-nav" />
 						<Navbar.Collapse id="basic-navbar-nav">
-							<Nav className="ml-auto justify-content-end">
-								<LinkContainer to="/about">
-	     						<Nav.Link className="quyen-contact" href="/about">About</Nav.Link>
-								</LinkContainer>
-								<LinkContainer to="/portfolio">
-	     						<Nav.Link className="quyen-contact" href="/about/portfolio">Portfolio</Nav.Link>
-								</LinkContainer>
-							  <LinkContainer to="/contact">
-	     						<Nav.Link className="quyen-contact" href="/contact">Contact</Nav.Link>
-								</LinkContainer>
-    					</Nav>
+						<Nav className="ml-auto justify-content-end">
+							<LinkContainer to="/portfolio">
+	     					<Nav.Link className="quyen-contact" href="/about/portfolio">portfolio</Nav.Link>
+							</LinkContainer>
+							<LinkContainer to="/about">
+	    					<Nav.Link className="quyen-contact" href="/about">about</Nav.Link>
+							</LinkContainer>
+							<LinkContainer to="/events">
+	    					<Nav.Link className="quyen-contact" href="/events">events</Nav.Link>
+							</LinkContainer>
+						  <LinkContainer to="/contact">
+	   						<Nav.Link className="quyen-contact" href="/contact">contact</Nav.Link>
+							</LinkContainer>
+    				</Nav>
 						</Navbar.Collapse>
 					</Navbar>
 				: <Fragment></Fragment>}
+				<div className="portfolio-container" >
 				<LinkContainer to="/">
 					<h1 className="quyenle-name" align="center"><a href="/">Quyen Le</a></h1>
 				</LinkContainer>
@@ -188,6 +192,10 @@ class Portfolio extends React.Component {
 //					direction="column"
 //					columns={this.columns}
 				/>
+				</div>
+        <Navbar bg="white" variant="light" sticky="bottom">
+					<Navbar.Brand><small>&copy; Quyen Le 2019</small></Navbar.Brand>
+				</Navbar>
 				<ModalGateway>
         	{modalIsOpen ? (
 						<Modal 

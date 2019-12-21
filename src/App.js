@@ -9,12 +9,14 @@ import Portfolio from './pages/portfolio' ;
 import SignIn from './pages/signin' ;
 import Contact from './pages/contact' ;
 import About from './pages/about' ;
+import Events from './pages/events' ;
 import UserHome from './pages/userhome' ;
 import Shoots from './pages/shoots' ;
 import Albums from './pages/albums' ;
 import Images from './pages/images' ;
 import Messages from './pages/messages' ;
 import Calendar from './pages/cal' ;
+import ImagesTest from './pages/imagestest' ;
 
 import './App.css';
 
@@ -61,6 +63,7 @@ class App extends React.Component {
 							<Route exact path="/portfolio" component={Portfolio} props={this.security}/>
 							<Route exact path="/contact" component={Contact} props={this.security}/>
 							<Route exact path="/about" component={About} props={this.security}/>
+							<Route exact path="/events" component={Events} props={this.security}/>
 							<Route exact path='/signin' render={(props) => <SignIn {...props} security={this.state.security} />} />
 							<Route component={Home} props={this.security}/>
 						</Switch>
@@ -71,6 +74,7 @@ class App extends React.Component {
 							<Route exact path="/portfolio" component={Portfolio} props={this.security}/>
 							<Route exact path="/contact" component={Contact} props={this.security}/>
 							<Route exact path="/about" component={About} props={this.security}/>
+							<Route exact path="/events" component={Events} props={this.security}/>
 							<Route exact path='/signin' render={(props) => <SignIn {...props} security={this.state.security} />} />
 							<Route exact path="/home" render={(props) => <UserHome {...props} security={this.state.security} />} />
 							<Route exact path="/shoots" render={(props) => <Shoots {...props} security={this.state.security} />} />
@@ -80,6 +84,7 @@ class App extends React.Component {
 							<Route path="/images/:imageid" render={(props) => <Images {...props} security={this.state.security} />} />
 							<Route exact path="/messages" render={(props) => <Messages {...props} security={this.state.security} />} />
 							<Route exact path="/calendar" render={(props) => <Calendar {...props} security={this.state.security} />} />
+							<Route exact path="/test/:imageid" render={(props) => <ImagesTest {...props} security={this.state.security} /> } />
 							<Route component={Home} props={this.security}/>
 						</Switch>
 				  </div>
